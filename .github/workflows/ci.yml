@@ -32,7 +32,7 @@ jobs:
       - uses: taiki-e/install-action@v2
         with:
           tool: wasm-pack
-      - run: wasm-pack build --release --target web
+      - run: wasm-pack build --release --target web --scope ardazeybek-dev
       - name: Assemble demo site
         run: |
           mkdir -p demo/pkg

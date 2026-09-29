@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ardazeybek-dev/kilim/actions/workflows/ci.yml/badge.svg)](https://github.com/ardazeybek-dev/kilim/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/kilim.svg)](https://crates.io/crates/kilim)
-[![npm](https://img.shields.io/npm/v/kilim.svg)](https://www.npmjs.com/package/kilim)
+[![npm](https://img.shields.io/npm/v/@ardazeybek-dev/kilim.svg)](https://www.npmjs.com/package/@ardazeybek-dev/kilim)
 
 **A small sequence CRDT for conflict-free collaborative text editing — written in Rust, running in the browser through WebAssembly.**
 
@@ -48,11 +48,11 @@ flowchart LR
 ### JavaScript / TypeScript (npm)
 
 ```bash
-npm install kilim
+npm install @ardazeybek-dev/kilim
 ```
 
 ```js
-import init, { Doc } from "kilim";
+import init, { Doc } from "@ardazeybek-dev/kilim";
 await init();
 
 const alice = new Doc(1);          // site id: unique per replica

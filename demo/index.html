@@ -17,7 +17,7 @@
       <p class="lead">Three people edit the same text over a slow, lossy, out-of-order network — and still end up with <em>exactly</em> the same document. No server, no locks, no merge conflicts.</p>
       <p class="links">
         <a href="https://github.com/ardazeybek-dev/kilim">GitHub</a>
-        <a href="https://www.npmjs.com/package/kilim">npm</a>
+        <a href="https://www.npmjs.com/package/@ardazeybek-dev/kilim">npm</a>
         <a href="https://crates.io/crates/kilim">crates.io</a>
       </p>
     </div>
@@ -74,7 +74,7 @@
         <li><strong>Operations are idempotent</strong> (duplicates are ignored) and <strong>buffered until their dependency arrives</strong>, so delivery order does not matter.</li>
         <li><strong>Version vectors</strong> let a replica that was offline ask for exactly the operations it missed.</li>
       </ol>
-      <pre><code>import init, { Doc } from "kilim";
+      <pre><code>import init, { Doc } from "@ardazeybek-dev/kilim";
 await init();
 const doc = new Doc(siteId);
 const ops = doc.insert(0, "merhaba");   // broadcast these
