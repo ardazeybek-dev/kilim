@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kilim — conflict-free collaborative text</title>
+  <meta name="description" content="A sequence CRDT written in Rust, running in your browser through WebAssembly. Three peers, a hostile network, zero conflicts.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 0 16 8 8 16 0 8z' fill='%23a78bfa'/><path d='M8 4 12 8 8 12 4 8z' fill='%230d0b14'/></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="pattern" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow">Rust · WebAssembly · CRDT</p>
+      <h1>kilim</h1>
+      <p class="lead">Three people edit the same text over a slow, lossy, out-of-order network — and still end up with <em>exactly</em> the same document. No server, no locks, no merge conflicts.</p>
+      <p class="links">
+        <a href="https://github.com/ardazeybek-dev/kilim">GitHub</a>
+        <a href="https://www.npmjs.com/package/kilim">npm</a>
+        <a href="https://crates.io/crates/kilim">crates.io</a>
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel network">
+      <div class="net-head">
+        <h2>The network</h2>
+        <span id="status" class="badge ok">converged</span>
+      </div>
+      <div class="controls">
+        <label>Latency <output id="latencyOut">600 ms</output>
+          <input id="latency" type="range" min="0" max="3000" step="50" value="600">
+        </label>
+        <label>Reordering (jitter) <output id="jitterOut">400 ms</output>
+          <input id="jitter" type="range" min="0" max="3000" step="50" value="400">
+        </label>
+        <label>Duplicates <output id="dupOut">10 %</output>
+          <input id="dup" type="range" min="0" max="100" step="5" value="10">
+        </label>
+        <div class="buttons">
+          <button id="chaos" type="button">Random typing storm</button>
+          <button id="reset" type="button" class="ghost">Reset</button>
+        </div>
+      </div>
+      <p class="stats"><span id="inflight">0</span> messages in flight · <span id="delivered">0</span> delivered · <span id="dups">0</span> duplicates</p>
+    </section>
+
+    <section class="peers" id="peers"></section>
+
+    <section class="panel">
+      <div class="net-head">
+        <h2>Inside the CRDT</h2>
+        <div class="tabs" id="inspectTabs" role="tablist"></div>
+      </div>
+      <p class="hint">Every character has a unique id <code>site:seq</code> and a Lamport clock. Deleted characters stay as tombstones so late-arriving edits can still find where they belong.</p>
+      <div id="items" class="items"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Real sync across browser tabs</h2>
+      <p class="hint">Open this page in a second tab and type below. Tabs sync through <code>BroadcastChannel</code>; a newly opened tab sends its version vector and receives only the operations it is missing. The document is also saved locally, so it survives a reload.</p>
+      <textarea id="tabDoc" class="editor tab-editor" spellcheck="false" placeholder="Type here, then open a second tab…"></textarea>
+      <p class="stats">This tab is site <code id="tabSite"></code> · version <code id="tabVersion">{}</code></p>
+    </section>
+
+    <section class="panel how">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Every insert remembers its left neighbour</strong> (its <em>origin</em>) instead of an index — indices change, ids don't.</li>
+        <li><strong>Concurrent inserts after the same origin</strong> are ordered by <code>(lamport, site)</code>, newest first. Every replica runs the same rule, so every replica picks the same order.</li>
+        <li><strong>Deletes leave tombstones</strong>, so an insert that arrives late can still attach to a deleted neighbour.</li>
+        <li><strong>Operations are idempotent</strong> (duplicates are ignored) and <strong>buffered until their dependency arrives</strong>, so delivery order does not matter.</li>
+        <li><strong>Version vectors</strong> let a replica that was offline ask for exactly the operations it missed.</li>
+      </ol>
+      <pre><code>import init, { Doc } from "kilim";
+await init();
+const doc = new Doc(siteId);
+const ops = doc.insert(0, "merhaba");   // broadcast these
+other.applyRemote(ops);                  // any order, any number of times</code></pre>
+    </section>
+  </main>
+
+  <footer class="wrap foot">Built with Rust + wasm-bindgen · MIT · <a href="https://github.com/ardazeybek-dev">@ardazeybek-dev</a></footer>
+
+  <template id="peerTpl">
+    <article class="peer">
+      <div class="peer-head">
+        <span class="dot"></span>
+        <strong class="name"></strong>
+        <label class="switch"><input type="checkbox" class="online" checked> online</label>
+      </div>
+      <textarea class="editor" spellcheck="false"></textarea>
+      <dl class="meta">
+        <div><dt>waiting for dependency</dt><dd class="pending">0</dd></div>
+        <div><dt>version vector</dt><dd class="version">{}</dd></div>
+      </dl>
+    </article>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
