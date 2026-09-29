@@ -1,0 +1,11 @@
+/target
+/pkg
+/demo/pkg
+node_modules/
+.env
+.env.*
+*.log
+.idea/
+.vscode/
+*.pem
+*.key
