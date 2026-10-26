@@ -1,7 +1,6 @@
 # kilim 🧶
 
 [![CI](https://github.com/ardazeybek-dev/kilim/actions/workflows/ci.yml/badge.svg)](https://github.com/ardazeybek-dev/kilim/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/kilim.svg)](https://crates.io/crates/kilim)
 [![npm](https://img.shields.io/npm/v/@ardazeybek-dev/kilim.svg)](https://www.npmjs.com/package/@ardazeybek-dev/kilim)
 
 **A small sequence CRDT for conflict-free collaborative text editing — written in Rust, running in the browser through WebAssembly.**
@@ -71,11 +70,11 @@ const missing = alice.opsSince(bob.version());
 
 Positions in the JS API are UTF-16 indices, the same as `String.prototype.slice`.
 
-### Rust (crates.io)
+### Rust (git dependency)
 
 ```toml
 [dependencies]
-kilim = "0.1"
+kilim = { git = "https://github.com/ardazeybek-dev/kilim" }
 ```
 
 ```rust
